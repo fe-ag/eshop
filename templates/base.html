@@ -1,0 +1,31 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{% if meta_title and meta_title != site.default_meta_title %}{{ meta_title }} | {{ site.store_name }}{% else %}{{ site.default_meta_title }}{% endif %}{% endblock %}</title>
+  <meta name="description" content="{% firstof meta_description site.default_meta_description %}">
+  {% if site.favicon %}<link rel="icon" href="{{ site.favicon.url }}">{% endif %}
+  <link rel="stylesheet" href="{% static 'css/store.css' %}">
+  <style>{{ theme_css|safe }}</style>
+  {% block head_extra %}{% endblock %}
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  {% if site.announcement_is_active and site.announcement_text %}
+    <div class="announce">
+      {% if site.announcement_url %}<a href="{{ site.announcement_url }}">{{ site.announcement_text }}</a>{% else %}{{ site.announcement_text }}{% endif %}
+    </div>
+  {% endif %}
+  {% include "shared/_header.html" %}
+  {% if messages %}
+    <div class="container msg-list" role="status" aria-live="polite">
+      {% for message in messages %}<div class="msg msg-{{ message.tags }}">{{ message }}</div>{% endfor %}
+    </div>
+  {% endif %}
+  <main id="main">{% block content %}{% endblock %}</main>
+  {% include "shared/_footer.html" %}
+  <script src="{% static 'js/store.js' %}" defer></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

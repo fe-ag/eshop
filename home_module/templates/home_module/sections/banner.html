@@ -1,0 +1,12 @@
+{% if section.image %}
+<section class="section banner" style="{{ section.style_attr }}">
+  <div class="container">
+    {% if section.button_url %}<a class="banner-link" href="{{ section.button_url }}">{% endif %}
+    <div class="banner-box" style="max-width:var(--banner-max);{% if section.height %}max-height:{{ section.height }}px;overflow:hidden{% endif %}">
+      {% include "home_module/sections/_image.html" with obj=section img_class="banner-img" %}
+    </div>
+    {% if section.button_url %}</a>{% endif %}
+    {% if section.title %}<p class="banner-caption">{{ section.title }}</p>{% endif %}
+  </div>
+</section>
+{% endif %}

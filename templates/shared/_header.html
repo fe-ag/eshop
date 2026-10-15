@@ -1,0 +1,35 @@
+{% load static %}
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="{% url 'home_page' %}">
+      {% if site.logo %}<img src="{{ site.logo.url }}" alt="{% firstof site.logo_alt site.store_name %}">{% else %}<span class="brand-text">{{ site.store_name }}</span>{% endif %}
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" data-nav-toggle>Menu</button>
+    <nav class="main-nav" id="main-nav" aria-label="Main">
+      <ul>
+        {% for category in menu_categories %}
+          <li><a href="{% url 'product_category' category.slug %}">{{ category.name }}</a></li>
+        {% endfor %}
+        {% for link in nav_links %}
+          <li><a href="{{ link.url }}"{% if link.open_in_new_tab %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ link.title }}</a></li>
+        {% endfor %}
+      </ul>
+    </nav>
+    <form class="search-form" action="{% url 'product_list' %}" method="get" role="search">
+      <label class="sr-only" for="site-search">Search products</label>
+      <input id="site-search" type="search" name="q" value="{{ request.GET.q }}" placeholder="Search phones &amp; tablets" maxlength="100">
+      <button type="submit" class="btn btn-sm">Search</button>
+    </form>
+    <div class="header-actions">
+      {% if user.is_authenticated %}
+        <a href="{% url 'account_page' %}">Account</a>
+        {% if user.is_manager %}<a href="{% url 'manage_dashboard' %}">Manage</a>{% endif %}
+        <form method="post" action="{% url 'account_logout' %}" class="inline-form">{% csrf_token %}<button type="submit" class="link-button">Sign out</button></form>
+      {% else %}
+        <a href="{% url 'account_login' %}">Sign in</a>
+        <a href="{% url 'account_register' %}">Register</a>
+      {% endif %}
+      <a class="cart-link" href="{% url 'cart_page' %}" aria-label="Cart, {{ cart_count }} item{{ cart_count|pluralize }}">Cart <span class="cart-badge">{{ cart_count }}</span></a>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,24 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Manager sign in</title>
+  <link rel="stylesheet" href="{% static 'css/manager.css' %}">
+</head>
+<body class="manager login-page">
+  <main class="login-box">
+    <h1>Manager sign in</h1>
+    <p class="muted">Only staff accounts can use this area.</p>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}">
+      {% if form.non_field_errors %}<div class="msg msg-error">{% for error in form.non_field_errors %}{{ error }}{% endfor %}</div>{% endif %}
+      {% for field in form %}{% include "shared/_field.html" %}{% endfor %}
+      <button class="btn btn-block" type="submit">Sign in</button>
+    </form>
+    <p class="small"><a href="/">&larr; Back to the store</a></p>
+  </main>
+</body>
+</html>

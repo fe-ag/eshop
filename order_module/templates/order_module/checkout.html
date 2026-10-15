@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container page">
+  <h1>Checkout</h1>
+  <div class="cart-layout">
+    <div>
+      <section class="card-box">
+        <h2>Delivery address</h2>
+        {% if user.has_complete_address %}
+          <address>
+            {{ user.get_full_name }}<br>
+            {{ user.street_address }}<br>
+            {{ user.city }}, {{ user.state }} {{ user.postal_code }}<br>
+            {{ user.country }}<br>
+            {{ user.phone }}
+          </address>
+        {% else %}
+          <p class="notice">Your address is incomplete.</p>
+        {% endif %}
+        <a class="btn btn-outline btn-sm" href="{% url 'account_page' %}">Edit address</a>
+      </section>
+      <section class="card-box">
+        <h2>Items</h2>
+        <ul class="plain-list">
+          {% for line in lines %}
+            <li class="summary-row{% if not line.available %} is-unavailable{% endif %}">
+              <span>{{ line.variant.product.name }} - {{ line.variant.label }}{% if line.available %} &times; {{ line.quantity }}{% endif %}{% if line.note %}<br><small class="cart-note">{{ line.note }}</small>{% endif %}</span>
+              <strong>{% if line.available %}{{ site.currency_symbol }}{{ line.line_total|floatformat:"2g" }}{% else %}-{% endif %}</strong>
+            </li>
+          {% endfor %}
+        </ul>
+      </section>
+    </div>
+    <aside class="cart-summary">
+      <h2>Summary</h2>
+      <p class="summary-row"><span>Total</span><strong>{{ site.currency_symbol }}{{ total|floatformat:"2g" }}</strong></p>
+      <p class="notice">Online payment is not available yet, so orders cannot be placed at the moment. Your cart is saved to your account.</p>
+      <a class="btn btn-outline btn-block" href="{% url 'cart_page' %}">Back to cart</a>
+    </aside>
+  </div>
+</div>
+{% endblock %}

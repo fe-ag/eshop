@@ -1,0 +1,11 @@
+<div class="field{% if field.errors %} has-error{% endif %}{% if field.field.widget.input_type == 'checkbox' %} field-check{% endif %}">
+  {% if field.field.widget.input_type == 'checkbox' %}
+    <label class="check-label">{{ field }} <span>{{ field.label }}</span></label>
+  {% else %}
+    <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} <span class="req" aria-hidden="true">*</span>{% endif %}</label>
+    {% if field.value and field.field.widget.attrs.accept == 'image/*' %}{% if field.value.url %}<img class="thumb-preview" src="{{ field.value.url }}" alt="">{% endif %}{% endif %}
+    {{ field }}
+  {% endif %}
+  {% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}
+  {% for error in field.errors %}<p class="error">{{ error }}</p>{% endfor %}
+</div>

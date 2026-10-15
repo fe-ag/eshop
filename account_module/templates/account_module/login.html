@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container page narrow">
+  <h1>Sign in</h1>
+  <form method="post" class="card-box form-stack" novalidate>
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ next }}">
+    {% if form.non_field_errors %}<div class="msg msg-error">{% for error in form.non_field_errors %}{{ error }}{% endfor %}</div>{% endif %}
+    {% for field in form %}{% include "shared/_field.html" %}{% endfor %}
+    <button class="btn btn-block btn-lg" type="submit">Sign in</button>
+    <p class="muted small">No account yet? <a href="{% url 'account_register' %}{% if next %}?next={{ next|urlencode }}{% endif %}">Register</a></p>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "manager_panel/base.html" %}
+{% block content %}
+<div class="page-head"><h1>Dashboard</h1><a class="btn" href="{% url 'manage_product_add' %}">Add product</a></div>
+<div class="stat-grid">
+  {% for stat in stats %}
+    <a class="stat" href="{{ stat.url }}"><span class="stat-value">{{ stat.value }}</span><span class="stat-label">{{ stat.label }}</span></a>
+  {% endfor %}
+</div>
+<div class="two-col">
+  <section class="panel-card">
+    <h2>Newest products</h2>
+    {% if latest_products %}
+      <table class="data-table compact">
+        <thead><tr><th>Product</th><th>Brand</th><th>Category</th><th>Status</th></tr></thead>
+        <tbody>
+          {% for product in latest_products %}
+            <tr><td><a href="{% url 'manage_product_edit' product.pk %}">{{ product.name }}</a></td><td>{{ product.brand.name }}</td><td>{{ product.category.name }}</td><td>{% if product.is_active %}<span class="pill pill-on">Active</span>{% else %}<span class="pill">Inactive</span>{% endif %}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}<p class="muted">No products yet.</p>{% endif %}
+  </section>
+  <section class="panel-card">
+    <h2>Inactive products</h2>
+    {% if inactive_products %}
+      <ul class="plain-list">{% for product in inactive_products %}<li><a href="{% url 'manage_product_edit' product.pk %}">{{ product.name }}</a> <span class="muted">({{ product.brand.name }})</span></li>{% endfor %}</ul>
+    {% else %}<p class="muted">All products are active.</p>{% endif %}
+  </section>
+</div>
+<div class="two-col">
+  <section class="panel-card">
+    <h2>Shortcuts</h2>
+    <ul class="plain-list shortcuts">
+      <li><a href="{% url 'manage_section_list' %}">Edit home page sections</a></li>
+      <li><a href="{% url 'manage_appearance' %}">Change colors, fonts and sizes</a></li>
+      <li><a href="{% url 'manage_footer' %}">Edit the footer</a></li>
+      <li><a href="{% url 'manage_site' %}">Store name, logo and contact</a></li>
+    </ul>
+  </section>
+  <section class="panel-card">
+    <h2>Store status</h2>
+    <ul class="plain-list">
+      <li>Home page sections: <strong>{{ active_sections }}</strong> active of {{ total_sections }}</li>
+      <li>Active product versions: <strong>{{ variant_count }}</strong></li>
+      <li>Announcement bar: <strong>{% if announcement_on %}on{% else %}off{% endif %}</strong></li>
+      <li>Orders: <span class="muted">order placement is not enabled yet (cart only)</span></li>
+    </ul>
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+  {% for section in sections %}
+    {% include section.template_name %}
+  {% empty %}
+    <div class="container page">
+      <div class="empty-state">
+        <h1>Welcome to {{ site.store_name }}</h1>
+        <p>{{ site.tagline }}</p>
+        <a class="btn" href="{% url 'product_list' %}">Browse products</a>
+      </div>
+    </div>
+  {% endfor %}
+{% endblock %}

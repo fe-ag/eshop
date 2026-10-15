@@ -1,0 +1,27 @@
+{% load static %}
+<article class="pcard">
+  <a class="pcard-link" href="{{ product.get_absolute_url }}">
+    <div class="pcard-img">
+      <img src="{{ product.main_image_url }}" alt="{{ product.image_alt_text }}" loading="lazy" onerror="this.onerror=null;this.src='{% static 'img/placeholder.svg' %}'">
+      {% if not product.in_stock %}<span class="badge badge-muted">Out of stock</span>{% elif product.has_discount %}<span class="badge">Sale</span>{% endif %}
+    </div>
+    <div class="pcard-body">
+      <p class="pcard-brand">{{ product.brand.name }}</p>
+      <h3 class="pcard-name">{{ product.name }}</h3>
+      {% if product.storage_labels %}<p class="pcard-meta">{{ product.storage_labels|join:" / " }}</p>{% endif %}
+      {% if product.color_options %}
+        <p class="swatches" aria-label="Available colors">
+          {% for color in product.color_options %}<span class="swatch" style="background:{{ color.hex_code }}" title="{{ color.name }}"></span>{% endfor %}
+        </p>
+      {% endif %}
+      {% if product.from_price is not None %}
+        <p class="price">
+          {% if product.get_active_variants|length > 1 %}<span class="price-from">From</span> {% endif %}<span class="price-now">{{ site.currency_symbol }}{{ product.from_price|floatformat:"2g" }}</span>
+          {% if product.list_price_for_from_price %}<span class="price-old">{{ site.currency_symbol }}{{ product.list_price_for_from_price|floatformat:"2g" }}</span>{% endif %}
+        </p>
+      {% else %}
+        <p class="price price-na">Currently unavailable</p>
+      {% endif %}
+    </div>
+  </a>
+</article>

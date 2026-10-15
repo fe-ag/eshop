@@ -1,0 +1,71 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>{% block title %}{{ page_title }}{% endblock %} | {{ site.store_name }} Manager</title>
+  <link rel="stylesheet" href="{% static 'css/manager.css' %}">
+  {% block head_extra %}{% endblock %}
+</head>
+<body class="manager">
+  <a class="skip-link" href="#content">Skip to content</a>
+  <div class="shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand"><a href="{% url 'manage_dashboard' %}">{{ site.store_name }}<small>Manager</small></a></div>
+      <nav aria-label="Management">
+        <ul class="nav-group">
+          <li><a href="{% url 'manage_dashboard' %}" class="{% if nav_section == 'dashboard' %}active{% endif %}">Dashboard</a></li>
+        </ul>
+        <p class="nav-label">Catalog</p>
+        <ul class="nav-group">
+          <li><a href="{% url 'manage_product_list' %}" class="{% if nav_section == 'products' %}active{% endif %}">Products</a></li>
+          <li><a href="{% url 'manage_category_list' %}" class="{% if nav_section == 'categories' %}active{% endif %}">Categories</a></li>
+          <li><a href="{% url 'manage_brand_list' %}" class="{% if nav_section == 'brands' %}active{% endif %}">Brands</a></li>
+          <li><a href="{% url 'manage_storage_list' %}" class="{% if nav_section == 'storage' %}active{% endif %}">Storage options</a></li>
+          <li><a href="{% url 'manage_color_list' %}" class="{% if nav_section == 'colors' %}active{% endif %}">Colors</a></li>
+        </ul>
+        <p class="nav-label">Storefront content</p>
+        <ul class="nav-group">
+          <li><a href="{% url 'manage_section_list' %}" class="{% if nav_section == 'sections' %}active{% endif %}">Home page sections</a></li>
+          <li><a href="{% url 'manage_navlink_list' %}" class="{% if nav_section == 'menu' %}active{% endif %}">Main menu</a></li>
+          <li><a href="{% url 'manage_page_list' %}" class="{% if nav_section == 'pages' %}active{% endif %}">Content pages</a></li>
+          <li><a href="{% url 'manage_footer' %}" class="{% if nav_section == 'footer' %}active{% endif %}">Footer settings</a></li>
+          <li><a href="{% url 'manage_footercol_list' %}" class="{% if nav_section == 'footer_columns' %}active{% endif %}">Footer columns</a></li>
+          <li><a href="{% url 'manage_social_list' %}" class="{% if nav_section == 'social' %}active{% endif %}">Social links</a></li>
+        </ul>
+        <p class="nav-label">Look &amp; settings</p>
+        <ul class="nav-group">
+          <li><a href="{% url 'manage_appearance' %}" class="{% if nav_section == 'appearance' %}active{% endif %}">Appearance</a></li>
+          <li><a href="{% url 'manage_font_list' %}" class="{% if nav_section == 'fonts' %}active{% endif %}">Custom fonts</a></li>
+          <li><a href="{% url 'manage_site' %}" class="{% if nav_section == 'site' %}active{% endif %}">Store settings</a></li>
+        </ul>
+        <p class="nav-label">People</p>
+        <ul class="nav-group">
+          <li><a href="{% url 'manage_user_list' %}" class="{% if nav_section == 'users' %}active{% endif %}">Customers</a></li>
+        </ul>
+      </nav>
+    </aside>
+    <div class="main">
+      <header class="topbar">
+        <button type="button" class="menu-btn" data-sidebar-toggle aria-controls="sidebar" aria-expanded="false">Menu</button>
+        <div class="topbar-right">
+          <a href="{% url 'home_page' %}" target="_blank" rel="noopener">View store</a>
+          <span class="muted">{{ user.get_full_name|default:user.email }}</span>
+          <form method="post" action="{% url 'manage_logout' %}" class="inline-form">{% csrf_token %}<button type="submit" class="link-button">Sign out</button></form>
+        </div>
+      </header>
+      <main id="content" class="content">
+        {% if messages %}
+          <div class="msg-list" role="status" aria-live="polite">
+            {% for message in messages %}<div class="msg msg-{{ message.tags }}">{{ message }}</div>{% endfor %}
+          </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+  <script src="{% static 'js/manager.js' %}" defer></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

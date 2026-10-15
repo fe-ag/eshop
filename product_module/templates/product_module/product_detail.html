@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="container page">
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <a href="{% url 'home_page' %}">Home</a> /
+    <a href="{% url 'product_category' product.category.slug %}">{{ product.category.name }}</a> /
+    <span>{{ product.name }}</span>
+  </nav>
+  <div class="pd">
+    <div class="gallery" data-gallery>
+      <div class="gallery-main">
+        <img id="gallery-main-img" src="{{ product.main_image_url }}" alt="{{ product.image_alt_text }}" onerror="this.onerror=null;this.src='{% static 'img/placeholder.svg' %}'">
+      </div>
+      {% if gallery %}
+        <ul class="thumbs">
+          <li><button type="button" class="thumb is-active" data-src="{{ product.main_image_url }}" data-alt="{{ product.image_alt_text }}"><img src="{{ product.main_image_url }}" alt="" loading="lazy"></button></li>
+          {% for image in gallery %}
+            <li><button type="button" class="thumb" data-src="{{ image.image.url }}" data-alt="{% firstof image.alt_text product.name %}"><img src="{{ image.image.url }}" alt="" loading="lazy"></button></li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+
+    <div class="pd-info">
+      <p class="pcard-brand"><a href="{% url 'product_brand' product.brand.slug %}">{{ product.brand.name }}</a></p>
+      <h1>{{ product.name }}</h1>
+      {% if product.short_description %}<p class="pd-short">{{ product.short_description }}</p>{% endif %}
+
+      {% if variants %}
+        <form method="post" action="{% url 'cart_add' %}" class="buy-form" data-buy-form data-currency="{{ site.currency_symbol }}">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.path }}">
+          <p class="price price-lg" aria-live="polite">
+            <span class="price-now" data-price-now>{{ site.currency_symbol }}{{ default_variant.effective_price|floatformat:"2g" }}</span>
+            <span class="price-old" data-price-old{% if not default_variant.has_discount %} hidden{% endif %}>{% if default_variant.has_discount %}{{ site.currency_symbol }}{{ default_variant.price|floatformat:"2g" }}{% endif %}</span>
+          </p>
+          <p class="stock" data-stock-text>{% if default_variant.in_stock %}<span class="in-stock">In stock{% if default_variant.stock <= 5 %} - only {{ default_variant.stock }} left{% endif %}</span>{% else %}<span class="out-stock">Out of stock</span>{% endif %}</p>
+
+          <fieldset class="variant-picker">
+            <legend>Choose version (Storage Capacity / Color)</legend>
+            <div class="variant-list">
+              {% for variant in variants %}
+                <label class="variant-opt{% if not variant.in_stock %} is-out{% endif %}">
+                  <input type="radio" name="variant_id" value="{{ variant.pk }}"
+                         data-price="{{ variant.effective_price }}" data-old="{% if variant.has_discount %}{{ variant.price }}{% endif %}" data-stock="{{ variant.stock }}"
+                         {% if variant.pk == default_variant.pk %}checked{% endif %}>
+                  <span class="variant-body">
+                    <span class="variant-storage">{{ variant.storage.label }}</span>
+                    <span class="variant-color"><span class="swatch" style="background:{{ variant.color.hex_code }}"></span>{{ variant.color.name }}</span>
+                    <span class="variant-price">{{ site.currency_symbol }}{{ variant.effective_price|floatformat:"2g" }}</span>
+                    {% if not variant.in_stock %}<span class="variant-flag">Out of stock</span>{% endif %}
+                  </span>
+                </label>
+              {% endfor %}
+            </div>
+          </fieldset>
+
+          <div class="buy-row">
+            <div class="field qty-field">
+              <label for="qty">Quantity</label>
+              <input class="form-control" id="qty" type="number" name="quantity" value="1" min="1" max="{{ max_quantity }}" data-qty>
+            </div>
+            <button class="btn btn-lg" type="submit" data-add-btn{% if not default_variant.in_stock %} disabled{% endif %}>Add to cart</button>
+          </div>
+        </form>
+      {% else %}
+        <div class="notice">This product is currently unavailable.</div>
+      {% endif %}
+
+      <table class="spec-table">
+        <caption class="sr-only">Key specifications</caption>
+        <tbody>
+          {% if product.storage_labels %}<tr><th scope="row">Storage Capacity</th><td>{{ product.storage_labels|join:", " }}</td></tr>{% endif %}
+          {% if product.color_options %}<tr><th scope="row">Color</th><td>{% for color in product.color_options %}<span class="swatch" style="background:{{ color.hex_code }}"></span>{{ color.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</td></tr>{% endif %}
+          {% for label, value in product.spec_rows %}<tr><th scope="row">{{ label }}</th><td>{{ value }}</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {% if product.description %}
+    <section class="pd-desc">
+      <h2>Description</h2>
+      {{ product.description|linebreaks }}
+    </section>
+  {% endif %}
+
+  {% if related_products %}
+    <section class="section related">
+      <h2 class="section-title">Related products</h2>
+      <div class="grid-products">
+        {% for product in related_products %}{% include "shared/_product_card.html" %}{% endfor %}
+      </div>
+    </section>
+  {% endif %}
+</div>
+{% endblock %}

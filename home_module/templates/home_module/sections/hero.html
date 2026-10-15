@@ -1,0 +1,16 @@
+<section class="hero{% if section.text_align == 'center' %} hero-center{% endif %}" style="{% if section.height %}min-height:{{ section.height }}px;{% endif %}{{ section.style_attr }}">
+  {% if section.image %}
+    <picture class="hero-picture">
+      {% if section.mobile_image %}<source media="(max-width: 767px)" srcset="{{ section.mobile_image.url }}">{% endif %}
+      <img class="hero-bg" src="{{ section.image.url }}" alt="{{ section.image_alt }}" style="object-fit:{{ section.image_fit }}">
+    </picture>
+  {% endif %}
+  <div class="container hero-inner">
+    <div class="hero-text">
+      {% if section.title %}<h1>{{ section.title }}</h1>{% endif %}
+      {% if section.subtitle %}<p class="hero-sub">{{ section.subtitle }}</p>{% endif %}
+      {% if section.body %}<div class="hero-body">{{ section.body|linebreaks }}</div>{% endif %}
+      {% if section.button_text and section.button_url %}<a class="btn btn-lg" href="{{ section.button_url }}">{{ section.button_text }}</a>{% endif %}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,68 @@
+{% extends "manager_panel/base.html" %}
+{% block content %}
+<div class="page-head"><h1>Appearance</h1></div>
+<p class="muted">Choose a design profile, then fine-tune colors, fonts and sizes. The preview updates instantly; nothing changes on the store until you press Save.</p>
+{{ presets_json|json_script:"presets-data" }}
+{{ font_stacks_json|json_script:"fonts-data" }}
+<form method="post" id="appearance-form" class="appearance-layout" novalidate>
+  {% csrf_token %}
+  <div class="appearance-fields">
+    {% if form.non_field_errors %}<div class="msg msg-error">{{ form.non_field_errors }}</div>{% endif %}
+    <fieldset class="panel-card">
+      <legend>Design profile</legend>
+      {% with field=form.profile_name %}{% include "shared/_field.html" %}{% endwith %}
+      <p class="help">Selecting a profile fills in all colors, fonts and sizes below. You can change any value afterwards.</p>
+    </fieldset>
+    <fieldset class="panel-card">
+      <legend>Colors</legend>
+      <div class="color-grid">
+        {% for field in color_fields %}{% include "shared/_field.html" %}{% endfor %}
+      </div>
+    </fieldset>
+    <fieldset class="panel-card">
+      <legend>Fonts</legend>
+      <div class="form-grid">
+        {% with field=form.body_font %}{% include "shared/_field.html" %}{% endwith %}
+        {% with field=form.custom_body_font %}{% include "shared/_field.html" %}{% endwith %}
+        {% with field=form.heading_font %}{% include "shared/_field.html" %}{% endwith %}
+        {% with field=form.custom_heading_font %}{% include "shared/_field.html" %}{% endwith %}
+      </div>
+      <p class="help">Uploaded fonts are managed under <a href="{% url 'manage_font_list' %}">Custom fonts</a> ({{ custom_font_count }} uploaded). The preview shows system fonts only.</p>
+    </fieldset>
+    <fieldset class="panel-card">
+      <legend>Product images</legend>
+      <div class="form-grid">
+        {% with field=form.card_aspect_ratio %}{% include "shared/_field.html" %}{% endwith %}
+        {% with field=form.product_image_fit %}{% include "shared/_field.html" %}{% endwith %}
+      </div>
+    </fieldset>
+    {% for title, fields in size_fields %}
+      <fieldset class="panel-card">
+        <legend>{{ title }}</legend>
+        <div class="form-grid">{% for field in fields %}{% include "shared/_field.html" %}{% endfor %}</div>
+      </fieldset>
+    {% endfor %}
+    <div class="form-actions sticky-actions">
+      <button class="btn" type="submit" name="action" value="save">Save appearance</button>
+      <button class="btn btn-ghost" type="reset" data-discard>Discard unsaved changes</button>
+    </div>
+  </div>
+  <aside class="preview-pane" aria-label="Live preview">
+    <h2>Live preview</h2>
+    <div id="theme-preview" class="pv">
+      <div class="pv-header"><strong>{{ site.store_name }}</strong><span>Smartphones</span><span>Tablets</span><span>Cart (2)</span></div>
+      <div class="pv-hero"><h3>Hero headline</h3><p>Supporting text for your latest offer.</p><span class="pv-btn">Shop now</span></div>
+      <div class="pv-cards">
+        <div class="pv-card"><div class="pv-img"></div><b>Product name</b><span class="pv-muted">256GB / Black</span><span class="pv-price">$799.00</span><a href="#preview" class="pv-link">View details</a></div>
+        <div class="pv-card"><div class="pv-img"></div><b>Another product</b><span class="pv-muted">128GB / Blue</span><span class="pv-price">$549.00</span><a href="#preview" class="pv-link">View details</a></div>
+      </div>
+      <div class="pv-footer">Footer text and links</div>
+    </div>
+  </aside>
+</form>
+<form method="post" class="reset-form" data-confirm="Reset the whole appearance to the default profile (Modern Blue)?">
+  {% csrf_token %}
+  <input type="hidden" name="action" value="reset">
+  <button class="btn btn-danger-outline" type="submit">Reset to default appearance</button>
+</form>
+{% endblock %}

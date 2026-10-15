@@ -1,0 +1,22 @@
+{% extends "manager_panel/base.html" %}
+{% block content %}
+<div class="page-head"><h1>{{ page_title }}</h1></div>
+<div class="panel-card narrow">
+  <p>Are you sure you want to delete <strong>{{ object }}</strong>? This cannot be undone.</p>
+  {% if extra_warning %}<p class="notice">{{ extra_warning }}</p>{% endif %}
+  {% if guard_message %}
+    <div class="msg msg-error">{{ guard_message }}</div>
+  {% elif blockers %}
+    <div class="msg msg-error">
+      This {{ object_label }} is still used by {{ blockers|join:", " }} and cannot be deleted.
+      {% if can_deactivate %}Deactivate it instead, or move those items elsewhere first.{% else %}Remove it from those items first.{% endif %}
+    </div>
+  {% endif %}
+  <div class="form-actions">
+    {% if not blockers and not guard_message %}
+      <form method="post">{% csrf_token %}<button class="btn btn-danger" type="submit">Yes, delete</button></form>
+    {% endif %}
+    <a class="btn btn-ghost" href="{{ cancel_url }}">Cancel</a>
+  </div>
+</div>
+{% endblock %}

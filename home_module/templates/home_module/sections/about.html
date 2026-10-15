@@ -1,0 +1,11 @@
+<section class="section" style="{{ section.style_attr }}">
+  <div class="container about">
+    <div class="about-text">
+      {% if section.title %}<h2 class="section-title">{{ section.title }}</h2>{% endif %}
+      {% if section.subtitle %}<p class="section-sub">{{ section.subtitle }}</p>{% endif %}
+      {{ section.body|linebreaks }}
+      {% if section.button_text and section.button_url %}<a class="btn btn-outline" href="{{ section.button_url }}">{{ section.button_text }}</a>{% endif %}
+    </div>
+    {% if section.image %}<div class="about-media">{% include "home_module/sections/_image.html" with obj=section img_class="about-img" %}</div>{% endif %}
+  </div>
+</section>

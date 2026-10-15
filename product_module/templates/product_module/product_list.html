@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container page">
+  <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="{% url 'home_page' %}">Home</a> / <a href="{% url 'product_list' %}">Products</a>{% if current_category or current_brand %} / <span>{{ page_title }}</span>{% endif %}</nav>
+  <div class="list-head">
+    <div>
+      <h1>{{ page_title }}</h1>
+      <p class="muted" id="result-count">{{ result_count }} product{{ result_count|pluralize }} found</p>
+      {% if current_category and current_category.description %}<p>{{ current_category.description }}</p>{% endif %}
+      {% if current_brand and current_brand.description %}<p>{{ current_brand.description }}</p>{% endif %}
+    </div>
+  </div>
+  <div class="shop-layout">
+    <form class="filters" method="get" action="{{ request.path }}" id="filter-form">
+      <h2 class="filters-title">Filter &amp; sort</h2>
+      <div class="field">
+        <label for="f-q">Search</label>
+        <input class="form-control" id="f-q" type="search" name="q" value="{{ current.q }}" maxlength="100">
+      </div>
+      <div class="field">
+        <label for="f-sort">Sort by</label>
+        <select class="form-control" id="f-sort" name="sort">
+          {% for key, label in sort_options %}<option value="{{ key }}"{% if current.sort == key or not current.sort and key == 'newest' %} selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select>
+      </div>
+      {% if not current_category %}
+      <div class="field">
+        <label for="f-category">Category</label>
+        <select class="form-control" id="f-category" name="category">
+          <option value="">All categories</option>
+          {% for category in categories %}<option value="{{ category.pk }}"{% if current.category == category.pk|stringformat:"s" %} selected{% endif %}>{{ category.name }}</option>{% endfor %}
+        </select>
+      </div>
+      {% endif %}
+      {% if not current_brand %}
+      <div class="field">
+        <label for="f-brand">Brand</label>
+        <select class="form-control" id="f-brand" name="brand">
+          <option value="">All brands</option>
+          {% for brand in brands %}<option value="{{ brand.pk }}"{% if current.brand == brand.pk|stringformat:"s" %} selected{% endif %}>{{ brand.name }}</option>{% endfor %}
+        </select>
+      </div>
+      {% endif %}
+      <div class="field">
+        <label for="f-storage">Storage Capacity</label>
+        <select class="form-control" id="f-storage" name="storage">
+          <option value="">Any</option>
+          {% for storage in storages %}<option value="{{ storage.pk }}"{% if current.storage == storage.pk|stringformat:"s" %} selected{% endif %}>{{ storage.label }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <label for="f-color">Color</label>
+        <select class="form-control" id="f-color" name="color">
+          <option value="">Any</option>
+          {% for color in colors %}<option value="{{ color.pk }}"{% if current.color == color.pk|stringformat:"s" %} selected{% endif %}>{{ color.name }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <span class="label">Price ({{ site.currency_symbol }})</span>
+        <div class="price-range">
+          <input class="form-control" type="number" name="min_price" min="0" step="1" placeholder="Min" value="{{ current.min_price }}" aria-label="Minimum price">
+          <input class="form-control" type="number" name="max_price" min="0" step="1" placeholder="Max" value="{{ current.max_price }}" aria-label="Maximum price">
+        </div>
+      </div>
+      <div class="field field-check"><label class="check-label"><input type="checkbox" name="in_stock" value="1"{% if current.in_stock == '1' %} checked{% endif %}> <span>In stock only</span></label></div>
+      <div class="field field-check"><label class="check-label"><input type="checkbox" name="featured" value="1"{% if current.featured == '1' %} checked{% endif %}> <span>Featured products</span></label></div>
+      <div class="filter-actions">
+        <button class="btn btn-block" type="submit">Apply</button>
+        {% if has_filters %}<a class="btn btn-outline btn-block" href="{{ request.path }}">Clear filters</a>{% endif %}
+      </div>
+    </form>
+    <div class="results">
+      {% if products %}
+        <div class="grid-products">
+          {% for product in products %}{% include "shared/_product_card.html" %}{% endfor %}
+        </div>
+        {% include "shared/_pagination.html" %}
+      {% else %}
+        <div class="empty-state">
+          <h2>No products found</h2>
+          <p>We could not find anything matching your search. Try different words or remove some filters.</p>
+          {% if has_filters %}<a class="btn" href="{{ request.path }}">Clear filters</a>{% else %}<a class="btn" href="{% url 'home_page' %}">Back to the shop</a>{% endif %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

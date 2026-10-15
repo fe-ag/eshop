@@ -1,0 +1,32 @@
+{% extends "manager_panel/base.html" %}
+{% block content %}
+<div class="page-head"><h1>{{ page_title }}</h1>{% if object.get_absolute_url %}<a class="btn btn-outline" href="{{ object.get_absolute_url }}" target="_blank" rel="noopener">View on store</a>{% endif %}</div>
+<form method="post" enctype="multipart/form-data" class="panel-form" novalidate{% if form_action %} action="{{ form_action }}"{% endif %}>
+  {% csrf_token %}
+  {% if form.non_field_errors %}<div class="msg msg-error">{% for error in form.non_field_errors %}{{ error }} {% endfor %}</div>{% endif %}
+  {% for title, fields in form.get_fieldsets %}
+    <fieldset class="panel-card">
+      {% if title %}<legend>{{ title }}</legend>{% endif %}
+      <div class="form-grid">
+        {% for field in fields %}{% include "shared/_field.html" %}{% endfor %}
+      </div>
+    </fieldset>
+  {% endfor %}
+  {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+  {% for item in formsets %}
+    {% include "manager_panel/_formset.html" with formset=item.formset spec=item.spec %}
+  {% endfor %}
+  <div class="form-actions">
+    <button class="btn" type="submit">Save</button>
+    <a class="btn btn-ghost" href="{{ cancel_url }}">Cancel</a>
+  </div>
+</form>
+{% if singleton %}
+  <form method="post" action="{{ form_action }}" class="reset-form" data-confirm="Reset these settings to their defaults?">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="reset">
+    <button class="btn btn-danger-outline" type="submit">Reset to defaults</button>
+    <span class="muted small">{{ reset_hint }}</span>
+  </form>
+{% endif %}
+{% endblock %}

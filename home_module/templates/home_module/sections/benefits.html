@@ -1,0 +1,21 @@
+{% if section.active_items %}
+<section class="section" style="{{ section.style_attr }}">
+  <div class="container">
+    {% if section.title or section.subtitle %}
+      <div class="section-head"><div>
+        {% if section.title %}<h2 class="section-title">{{ section.title }}</h2>{% endif %}
+        {% if section.subtitle %}<p class="section-sub">{{ section.subtitle }}</p>{% endif %}
+      </div></div>
+    {% endif %}
+    <div class="benefits-grid">
+      {% for item in section.active_items %}
+        <div class="benefit">
+          {% if item.image %}<img src="{{ item.image.url }}" alt="{{ item.image_alt }}" loading="lazy" class="benefit-img">{% elif item.icon %}<span class="benefit-icon" aria-hidden="true">{{ item.icon }}</span>{% endif %}
+          <h3>{% if item.url %}<a href="{{ item.url }}">{{ item.title }}</a>{% else %}{{ item.title }}{% endif %}</h3>
+          {% if item.text %}<p>{{ item.text }}</p>{% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}

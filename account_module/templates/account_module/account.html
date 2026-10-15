@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container page narrow-lg">
+  <h1>My account</h1>
+  <form method="post" class="card-box" novalidate>
+    {% csrf_token %}
+    <input type="hidden" name="form_type" value="profile">
+    <h2>Personal information</h2>
+    {% if profile_form.non_field_errors %}<div class="msg msg-error">{{ profile_form.non_field_errors }}</div>{% endif %}
+    <div class="form-grid">{% for field in profile_form %}{% include "shared/_field.html" %}{% endfor %}</div>
+    <button class="btn" type="submit">Save information</button>
+  </form>
+  <form method="post" class="card-box" novalidate>
+    {% csrf_token %}
+    <input type="hidden" name="form_type" value="address">
+    <h2>Delivery address</h2>
+    {% if address_form.non_field_errors %}<div class="msg msg-error">{{ address_form.non_field_errors }}</div>{% endif %}
+    <div class="form-grid">{% for field in address_form %}{% include "shared/_field.html" %}{% endfor %}</div>
+    <button class="btn" type="submit">Save address</button>
+  </form>
+  <p><a href="{% url 'account_password' %}">Change password</a></p>
+</div>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "manager_panel/base.html" %}
+{% block content %}
+<div class="page-head">
+  <h1>{{ page_title }}</h1>
+  {% if add_url %}<a class="btn" href="{{ add_url }}">{{ add_label }}</a>{% endif %}
+</div>
+{% if intro %}<p class="muted">{{ intro }}</p>{% endif %}
+
+{% if has_search or has_status_filter or filter_data or sort_choices %}
+<form class="toolbar" method="get">
+  {% if has_search %}<input class="form-control" type="search" name="q" value="{{ query }}" placeholder="Search..." aria-label="Search">{% endif %}
+  {% for item in filter_data %}
+    <select class="form-control" name="{{ item.param }}" aria-label="{{ item.label }}">
+      <option value="">{{ item.label }}: all</option>
+      {% for value, label in item.options %}<option value="{{ value }}"{% if item.selected == value|stringformat:"s" %} selected{% endif %}>{{ label }}</option>{% endfor %}
+    </select>
+  {% endfor %}
+  {% if has_status_filter %}
+    <select class="form-control" name="status" aria-label="Status">
+      <option value="">Any status</option>
+      <option value="active"{% if status == 'active' %} selected{% endif %}>Active</option>
+      <option value="inactive"{% if status == 'inactive' %} selected{% endif %}>Inactive</option>
+    </select>
+  {% endif %}
+  {% if sort_choices %}
+    <select class="form-control" name="sort" aria-label="Sort">
+      <option value="">Default order</option>
+      {% for key, label in sort_choices %}<option value="{{ key }}"{% if sort == key %} selected{% endif %}>{{ label }}</option>{% endfor %}
+    </select>
+  {% endif %}
+  <button class="btn btn-outline" type="submit">Apply</button>
+  {% if query or status or sort or querystring %}<a class="btn btn-ghost" href="{{ list_url }}">Reset</a>{% endif %}
+</form>
+{% endif %}
+
+{% if rows %}
+<div class="table-wrap">
+<table class="data-table">
+  <thead><tr>{% for label in column_labels %}<th>{{ label }}</th>{% endfor %}<th class="actions-col">Actions</th></tr></thead>
+  <tbody>
+    {% for row in rows %}
+    <tr{% if row.is_active is False %} class="is-inactive"{% endif %}>
+      {% for cell in row.cells %}
+        <td data-label="{{ cell.label }}">
+          {% if cell.kind == 'image' %}{% if cell.value %}<img class="row-thumb" src="{{ cell.value }}" alt="">{% else %}<span class="muted">-</span>{% endif %}
+          {% elif cell.kind == 'bool' %}{% if cell.value %}<span class="pill pill-on">Yes</span>{% else %}<span class="pill">No</span>{% endif %}
+          {% elif cell.kind == 'color' %}<span class="color-dot" style="background:{{ cell.value }}"></span>
+          {% else %}{{ cell.value }}{% endif %}
+        </td>
+      {% endfor %}
+      <td class="actions">
+        {% if row.obj.get_absolute_url %}<a href="{{ row.obj.get_absolute_url }}" target="_blank" rel="noopener">View</a>{% endif %}
+        {% if edit_name %}<a href="{% url edit_name row.obj.pk %}">Edit</a>{% endif %}
+        {% if move_name %}
+          <form method="post" action="{% url move_name row.obj.pk 'up' %}" class="inline-form">{% csrf_token %}<input type="hidden" name="next" value="{{ current_url }}"><button class="icon-btn" type="submit" aria-label="Move up" title="Move up">&uarr;</button></form>
+          <form method="post" action="{% url move_name row.obj.pk 'down' %}" class="inline-form">{% csrf_token %}<input type="hidden" name="next" value="{{ current_url }}"><button class="icon-btn" type="submit" aria-label="Move down" title="Move down">&darr;</button></form>
+        {% endif %}
+        {% if toggle_name and row.can_toggle %}
+          <form method="post" action="{% url toggle_name row.obj.pk %}" class="inline-form">{% csrf_token %}<input type="hidden" name="next" value="{{ current_url }}"><button class="link-button" type="submit">{% if row.is_active %}Deactivate{% else %}Activate{% endif %}</button></form>
+        {% endif %}
+        {% if delete_name %}<a class="danger" href="{% url delete_name row.obj.pk %}">Delete</a>{% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% include "manager_panel/_pagination.html" %}
+{% else %}
+  <div class="empty-state"><p>{{ empty_text }}</p>{% if add_url %}<a class="btn" href="{{ add_url }}">{{ add_label }}</a>{% endif %}</div>
+{% endif %}
+{% endblock %}

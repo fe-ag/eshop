@@ -1,0 +1,21 @@
+{% if section.categories %}
+<section class="section" style="{{ section.style_attr }}">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        {% if section.title %}<h2 class="section-title">{{ section.title }}</h2>{% endif %}
+        {% if section.subtitle %}<p class="section-sub">{{ section.subtitle }}</p>{% endif %}
+      </div>
+    </div>
+    <div class="cat-grid">
+      {% for category in section.categories %}
+        <a class="cat-tile" href="{% url 'product_category' category.slug %}">
+          {% if category.image %}<img src="{{ category.image.url }}" alt="{% firstof category.image_alt category.name %}" loading="lazy" style="object-fit:{{ section.image_fit }}{% if section.image_ratio_css %};aspect-ratio:{{ section.image_ratio_css }}{% endif %}">{% else %}<div class="cat-noimg"></div>{% endif %}
+          <span class="cat-name">{{ category.name }}</span>
+          {% if category.description %}<span class="cat-desc">{{ category.description|truncatechars:90 }}</span>{% endif %}
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}

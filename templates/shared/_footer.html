@@ -1,0 +1,39 @@
+<footer class="site-footer">
+  <div class="container footer-grid">
+    {% for block in footer_blocks %}
+      <div class="footer-col">
+        {% if block.type == 'about' %}
+          {% if footer.show_logo %}
+            <p class="footer-brand">{% if site.logo %}<img src="{{ site.logo.url }}" alt="{% firstof site.logo_alt site.store_name %}">{% else %}{{ site.store_name }}{% endif %}</p>
+          {% endif %}
+          {% if footer.title %}<h2 class="footer-title">{{ footer.title }}</h2>{% endif %}
+          {% if footer.show_description and footer.description %}<p>{{ footer.description }}</p>{% endif %}
+        {% elif block.type == 'links' %}
+          <h2 class="footer-title">{{ block.column.title }}</h2>
+          <ul class="footer-links">
+            {% for link in block.links %}
+              <li><a href="{{ link.url }}"{% if link.open_in_new_tab %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ link.title }}</a></li>
+            {% endfor %}
+          </ul>
+        {% elif block.type == 'contact' %}
+          <h2 class="footer-title">{{ footer.contact_title }}</h2>
+          <ul class="footer-links">
+            {% if site.contact_email %}<li><a href="mailto:{{ site.contact_email }}">{{ site.contact_email }}</a></li>{% endif %}
+            {% if site.contact_phone %}<li>{{ site.contact_phone }}</li>{% endif %}
+            {% if site.address %}<li>{{ site.address|linebreaksbr }}</li>{% endif %}
+          </ul>
+        {% elif block.type == 'social' %}
+          <h2 class="footer-title">{{ footer.social_title }}</h2>
+          <ul class="footer-links">
+            {% for social in social_links %}
+              <li><a href="{{ social.url }}" target="_blank" rel="noopener noreferrer">{{ social.display_name }}</a></li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+  {% if footer.show_copyright and footer_copyright %}
+    <div class="container footer-bottom">{{ footer_copyright }}</div>
+  {% endif %}
+</footer>

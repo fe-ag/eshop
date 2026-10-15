@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container page narrow-lg">
+  <h1>Create your account</h1>
+  <form method="post" class="card-box" novalidate>
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ next }}">
+    {% if form.non_field_errors %}<div class="msg msg-error">{% for error in form.non_field_errors %}{{ error }}{% endfor %}</div>{% endif %}
+    <fieldset class="form-section">
+      <legend>Your details</legend>
+      <div class="form-grid">
+        {% for field in form %}
+          {% if field.name == 'first_name' or field.name == 'last_name' or field.name == 'email' or field.name == 'phone' or field.name == 'password' or field.name == 'confirm_password' %}
+            {% include "shared/_field.html" %}
+          {% endif %}
+        {% endfor %}
+      </div>
+    </fieldset>
+    <fieldset class="form-section">
+      <legend>Delivery address</legend>
+      <div class="form-grid">
+        {% for field in form %}
+          {% if field.name == 'country' or field.name == 'state' or field.name == 'city' or field.name == 'postal_code' or field.name == 'street_address' %}
+            {% include "shared/_field.html" %}
+          {% endif %}
+        {% endfor %}
+      </div>
+    </fieldset>
+    <button class="btn btn-lg" type="submit">Create account</button>
+    <p class="muted small">Already registered? <a href="{% url 'account_login' %}{% if next %}?next={{ next|urlencode }}{% endif %}">Sign in</a></p>
+  </form>
+</div>
+{% endblock %}

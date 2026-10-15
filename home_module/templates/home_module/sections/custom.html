@@ -1,0 +1,20 @@
+<section class="section" style="{{ section.style_attr }}">
+  <div class="container{% if section.text_align == 'center' %} text-center{% endif %}">
+    {% if section.title %}<h2 class="section-title">{{ section.title }}</h2>{% endif %}
+    {% if section.subtitle %}<p class="section-sub">{{ section.subtitle }}</p>{% endif %}
+    {% if section.image %}<div class="custom-media">{% include "home_module/sections/_image.html" with obj=section img_class="about-img" %}</div>{% endif %}
+    {% if section.body %}{{ section.body|linebreaks }}{% endif %}
+    {% if section.active_items %}
+      <div class="benefits-grid">
+        {% for item in section.active_items %}
+          <div class="benefit">
+            {% if item.image %}<img src="{{ item.image.url }}" alt="{{ item.image_alt }}" loading="lazy" class="benefit-img">{% elif item.icon %}<span class="benefit-icon" aria-hidden="true">{{ item.icon }}</span>{% endif %}
+            <h3>{% if item.url %}<a href="{{ item.url }}">{{ item.title }}</a>{% else %}{{ item.title }}{% endif %}</h3>
+            {% if item.text %}<p>{{ item.text }}</p>{% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    {% if section.button_text and section.button_url %}<p><a class="btn" href="{{ section.button_url }}">{{ section.button_text }}</a></p>{% endif %}
+  </div>
+</section>

@@ -1,0 +1,6 @@
+{% load static %}{% if obj.image %}
+<picture>
+  {% if obj.mobile_image %}<source media="(max-width: 767px)" srcset="{{ obj.mobile_image.url }}">{% endif %}
+  <img class="{{ img_class }}" src="{{ obj.image.url }}" alt="{{ obj.image_alt }}"{% if obj.image_ratio_css %} style="aspect-ratio:{{ obj.image_ratio_css }};object-fit:{{ obj.image_fit }}"{% else %} style="object-fit:{{ obj.image_fit }}"{% endif %} loading="lazy">
+</picture>
+{% endif %}
